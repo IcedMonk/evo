@@ -67,11 +67,13 @@ export const createInstance = asyncHandler(async (req: AuthRequest, res: Respons
   await user.save();
 
   // Emit real-time update
-  io.to(userId).emit('instance-created', {
-    instanceName,
-    status: 'created',
-    data: result.data
-  });
+  if (userId) {
+    io.to(userId).emit('instance-created', {
+      instanceName,
+      status: 'created',
+      data: result.data
+    });
+  }
 
   res.status(201).json({
     success: true,
@@ -236,10 +238,12 @@ export const deleteInstance = asyncHandler(async (req: AuthRequest, res: Respons
   await user.save();
 
   // Emit real-time update
-  io.to(userId).emit('instance-deleted', {
-    instanceName,
-    status: 'deleted'
-  });
+  if (userId) {
+    io.to(userId).emit('instance-deleted', {
+      instanceName,
+      status: 'deleted'
+    });
+  }
 
   res.json({
     success: true,
@@ -296,10 +300,12 @@ export const updateInstance = asyncHandler(async (req: AuthRequest, res: Respons
   }
 
   // Emit real-time update
-  io.to(userId).emit('instance-updated', {
-    instanceName,
-    updates: results.map(r => ({ type: r.type, success: true }))
-  });
+  if (userId) {
+    io.to(userId).emit('instance-updated', {
+      instanceName,
+      updates: results.map(r => ({ type: r.type, success: true }))
+    });
+  }
 
   res.json({
     success: true,

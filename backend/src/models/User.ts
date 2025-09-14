@@ -2,7 +2,10 @@ import mongoose, { Document, Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import { User as IUser } from '../types';
 
-export interface UserDocument extends IUser, Document {
+// Omit the id from IUser to avoid conflict with Document's _id
+type UserWithoutId = Omit<IUser, 'id'>;
+
+export interface UserDocument extends UserWithoutId, Document {
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -61,8 +64,9 @@ const userSchema = new Schema<UserDocument>({
   timestamps: true,
   toJSON: {
     transform: function(doc, ret) {
-      delete ret.password;
-      return ret;
+      const retObj = ret.toObject ? ret.toObject() : { ...ret };
+      delete retObj.password;
+      return retObj;
     }
   }
 });

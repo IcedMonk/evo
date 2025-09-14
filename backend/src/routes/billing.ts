@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Response } from 'express';
 import { body, validationResult } from 'express-validator';
 import { asyncHandler } from '../middleware/errorHandler';
 import { AuthRequest } from '../types';
@@ -247,11 +247,12 @@ export const handleWebhook = asyncHandler(async (req: Request, res: Response) =>
   // In a real implementation, you would verify the webhook signature
   // and handle the payment confirmation from Stripe
   
-  const { type, data } = req.body;
+  // Parse the request body as a Stripe event
+  const event = req.body as { type?: string; data?: any };
 
-  if (type === 'checkout.session.completed') {
+  if (event && event.type === 'checkout.session.completed') {
     // Handle successful payment
-    console.log('Payment successful:', data);
+    console.log('Payment successful:', event.data);
   }
 
   res.json({ received: true });

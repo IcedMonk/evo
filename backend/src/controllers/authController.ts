@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import { User } from '../models/User';
 import { asyncHandler } from '../middleware/errorHandler';
@@ -12,9 +12,11 @@ const generateToken = (id: string): string => {
     throw new Error('JWT secret not configured');
   }
   
-  return jwt.sign({ id }, jwtSecret, {
-    expiresIn: process.env.JWT_EXPIRE || '7d'
-  });
+  // Use a specific type for the payload
+  const payload = { id };
+  
+  // Sign the token with default options
+  return jwt.sign(payload, jwtSecret, { expiresIn: '7d' });
 };
 
 // @desc    Register user
@@ -50,7 +52,7 @@ export const register = asyncHandler(async (req: Request, res: Response) => {
   });
 
   // Generate token
-  const token = generateToken(user._id);
+  const token = generateToken(String(user._id));
 
   res.status(201).json({
     success: true,
@@ -102,7 +104,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   }
 
   // Generate token
-  const token = generateToken(user._id);
+  const token = generateToken(String(user._id));
 
   res.json({
     success: true,
@@ -164,7 +166,7 @@ export const forgotPassword = asyncHandler(async (req: Request, res: Response) =
   }
 
   // Generate reset token
-  const resetToken = generateToken(user._id);
+  const resetToken = generateToken(String(user._id));
 
   // In a real application, you would send this token via email
   // For now, we'll just return it (remove this in production)

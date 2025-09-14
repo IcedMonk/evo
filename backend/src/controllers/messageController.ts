@@ -64,12 +64,14 @@ export const sendTextMessage = asyncHandler(async (req: AuthRequest, res: Respon
   }
 
   // Emit real-time update
-  io.to(userId).emit('message-sent', {
-    instanceName,
-    messageId: result.data?.messageId,
-    status: 'sent',
-    type: 'text'
-  });
+  if (userId) {
+    io.to(userId).emit('message-sent', {
+      instanceName,
+      messageId: result.data?.messageId,
+      status: 'sent',
+      type: 'text'
+    });
+  }
 
   res.json({
     success: true,
@@ -129,12 +131,14 @@ export const sendMediaMessage = asyncHandler(async (req: AuthRequest, res: Respo
   }
 
   // Emit real-time update
-  io.to(userId).emit('message-sent', {
-    instanceName,
-    messageId: result.data?.messageId,
-    status: 'sent',
-    type: 'media'
-  });
+  if (userId) {
+    io.to(userId).emit('message-sent', {
+      instanceName,
+      messageId: result.data?.messageId,
+      status: 'sent',
+      type: 'media'
+    });
+  }
 
   res.json({
     success: true,
@@ -185,12 +189,14 @@ export const sendTemplateMessage = asyncHandler(async (req: AuthRequest, res: Re
   }
 
   // Emit real-time update
-  io.to(userId).emit('message-sent', {
-    instanceName,
-    messageId: result.data?.messageId,
-    status: 'sent',
-    type: 'template'
-  });
+  if (userId) {
+    io.to(userId).emit('message-sent', {
+      instanceName,
+      messageId: result.data?.messageId,
+      status: 'sent',
+      type: 'template'
+    });
+  }
 
   res.json({
     success: true,
@@ -367,11 +373,13 @@ export const createGroup = asyncHandler(async (req: AuthRequest, res: Response) 
   }
 
   // Emit real-time update
-  io.to(userId).emit('group-created', {
-    instanceName,
-    groupId: result.data?.groupId,
-    status: 'created'
-  });
+  if (userId) {
+    io.to(userId).emit('group-created', {
+      instanceName,
+      groupId: result.data?.groupId,
+      status: 'created'
+    });
+  }
 
   res.json({
     success: true,
